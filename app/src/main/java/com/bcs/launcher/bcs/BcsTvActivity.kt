@@ -41,6 +41,7 @@ class BcsTvActivity : AppCompatActivity() {
 
         // ---- Film & Drama ----
         Channel("AsianCrush", "Film & Drama", "https://linear-900.frequency.stream/dist/cineverse/900/hls/master/playlist.m3u8"),
+        Channel("Bloomberg Originals", "Film & Drama", "https://bloomberg.com/media-manifest/streams/qt.m3u8"),
 
         // ---- Olahraga ----
         Channel("Red Bull TV", "Olahraga", "https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master.m3u8"),
@@ -58,6 +59,9 @@ class BcsTvActivity : AppCompatActivity() {
         Channel("CGTN Documentary", "Ilmu Pengetahuan", "https://amg00405-rakutentv-cgtndocumentary-rakuten-0ql8j.amagi.tv/master.m3u8"),
         Channel("CNA Originals", "Ilmu Pengetahuan", "https://amg01082-cna-amg01082c1-rlaxx-us-11304.playouts.now.amagi.tv/playlist.m3u8"),
         Channel("Stingray Naturescape", "Ilmu Pengetahuan", "https://lotus.stingray.com/manifest/naturescape-a003-montreal/samsungtvplus/master.m3u8"),
+        Channel("Love The Planet", "Ilmu Pengetahuan", "https://amg01821-lovetvchannels-lovetheplanetuksamsung-samsunguk-apopw.amagi.tv/playlist/amg01821-lovetvchannels-lovetheplanetuksamsung-samsunguk/playlist.m3u8"),
+        Channel("Discovering China", "Ilmu Pengetahuan", "https://fastlive.cctvplus.com/out/v1/8442c3bfd4c64a3984389328f6087879/index.m3u8"),
+        Channel("China Travel", "Ilmu Pengetahuan", "https://fastlive.cctvplus.com/out/v1/ca6f9297b7314a63959435028af287fc/index.m3u8"),
 
         // ---- Berita ----
         Channel("DW English", "Berita", "https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8"),
@@ -74,7 +78,10 @@ class BcsTvActivity : AppCompatActivity() {
         // ---- Lainnya ----
         Channel("Tastemade", "Lainnya", "https://rakutenaa-tm-intl-aus-rakuten-eu-n1gtg.amagi.tv/playlist/rakutenAA-tm-intl-aus-rakuten-eu/playlist.m3u8"),
         Channel("Arirang TV", "Lainnya", "https://amdlive-ch01-ctnd-com.akamaized.net/arirang_1ch/smil:arirang_1ch.smil/playlist.m3u8"),
-        Channel("CGTN", "Lainnya", "https://english-livebkali.cgtn.com/live/encgtn.m3u8")
+        Channel("CGTN", "Lainnya", "https://english-livebkali.cgtn.com/live/encgtn.m3u8"),
+        Channel("RTHK 31", "Lainnya", "https://rthktv31-live.akamaized.net/hls/live/2036818/RTHKTV31/master.m3u8"),
+        Channel("CCTV-1", "Lainnya", "https://ldncctvwbcdali.v.myalicdn.com/ldncctvwbcd/cdrmldcctv1_1/index.m3u8"),
+        Channel("CCTV-13", "Lainnya", "https://ldncctvwbcdali.v.myalicdn.com/ldncctvwbcd/cdrmldcctv13_1/index.m3u8")
     )
 
     private var selectedCategory = categories.first()

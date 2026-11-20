@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">BCS Launcher</string>
+    <string name="bcs_tv">BCS TV</string>
+    <string name="youtube">YouTube</string>
+    <string name="youtube_music">YouTube Music</string>
+    <string name="file_manager">File Manager</string>
+    <string name="media_player">Media Player</string>
+    <string name="app_drawer">Semua Aplikasi</string>
+    <string name="settings">Pengaturan</string>
+    <string name="search">Cari</string>
+    <string name="no_apps">Tidak ada aplikasi</string>
+    <string name="open_failed">Gagal membuka aplikasi</string>
+    <string name="channel_local">TV Lokal Indonesia</string>
+    <string name="channel_kdrama">Drama Korea</string>
+    <string name="channel_cdrama">Drama China</string>
+    <string name="channel_sports">Olahraga</string>
+    <string name="channel_music">Musik</string>
+    <string name="channel_news">Berita</string>
+    <string name="channel_kids">Anak</string>
+    <string name="back">Kembali</string>
+    <string name="play">Putar</string>
+    <string name="pause">Jeda</string>
+</resources>

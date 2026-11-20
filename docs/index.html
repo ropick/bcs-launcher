@@ -143,6 +143,12 @@ body{background:radial-gradient(1200px 600px at 20% -10%,#1a2a55 0%,transparent 
     <div class="filelist" id="filelist2"></div>
   </div>
 
+  <div class="content view" id="bcsView">
+    <div class="row-head"><h2>BCS TV</h2><span id="backFromBcs" style="cursor:pointer;color:var(--accent)">← Kembali</span></div>
+    <div class="cats" id="bcsCats"></div>
+    <div class="rail" id="bcsChans" style="flex-wrap:wrap;overflow:visible"></div>
+  </div>
+
   <div class="hint">Preview web interaktif — navigasi mouse/keyboard. Bukan aplikasi Android asli.</div>
 </div>
 
@@ -171,7 +177,7 @@ body{background:radial-gradient(1200px 600px at 20% -10%,#1a2a55 0%,transparent 
 const imgs=['https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?auto=format&fit=crop&w=400&q=60','https://images.unsplash.com/photo-1489599849927-2e318f0a6015?auto=format&fit=crop&w=400&q=60','https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?auto=format&fit=crop&w=400&q=60','https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=400&q=60','https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=400&q=60'];
 
 const apps=[
- {label:'BCS TV',icon:'📺',color:'#1e88e5',action:()=>openView('bcs')},
+ {label:'BCS TV',icon:'📺',color:'#1e88e5',action:()=>openBcs()},
  {label:'YouTube',icon:'▶',color:'#ff0000',action:()=>play('YouTube (preview)')},
  {label:'YT Music',icon:'🎵',color:'#ff0000',action:()=>play('YouTube Music (preview)')},
  {label:'Files',icon:'📁',color:'#ffc107',action:()=>openFiles('/')},
@@ -196,17 +202,17 @@ document.getElementById('search').addEventListener('input',e=>{
  });
 });
 
-const cats=['TV Lokal','K-Drama','C-Drama','Olahraga','Musik','Berita','Anak'];
+const cats=['TV Lokal Indonesia','Drama Korea','Drama China','Olahraga','Musik','Berita','Anak'];
 const catsEl=document.getElementById('cats');
-let selCat='TV Lokal';
+let selCat='TV Lokal Indonesia';
 cats.forEach(c=>{
  const e=document.createElement('div');e.className='cat'+(c===selCat?' on':'');e.textContent=c;
  e.onclick=()=>{selCat=c;catsEl.querySelectorAll('.cat').forEach(x=>x.classList.remove('on'));e.classList.add('on');renderChans(c);}; catsEl.appendChild(e);
 });
 const chanData={
- 'TV Lokal':['RCTI','SCTV','Indosiar','Trans TV','Metro TV'],
- 'K-Drama':['K-Drama 1','K-Drama 2','K-Drama 3','Hospital Playlist'],
- 'C-Drama':['C-Drama 1','C-Drama 2','Love O2O'],
+ 'TV Lokal Indonesia':['RCTI','SCTV','Indosiar','Trans TV','Metro TV'],
+ 'Drama Korea':['K-Drama 1','K-Drama 2','K-Drama 3','Hospital Playlist'],
+ 'Drama China':['C-Drama 1','C-Drama 2','Love O2O'],
  'Olahraga':['Sport 1','Sport 2','Liga 1'],
  'Musik':['Music 1','Music 2','MTV'],
  'Berita':['News 1','News 2'],
@@ -227,6 +233,28 @@ for(let i=0;i<10;i++){
  const c=document.createElement('div');c.className='card';c.tabIndex=0;
  c.innerHTML=`<div class="thumb" style="background-image:url('${imgs[i%imgs.length]}')"></div><div class="grad"></div><div class="info"><div class="t">Judul ${i+1}</div><div class="s">2024 • HD</div></div>`;
  c.onclick=()=>play('Judul '+(i+1)); recs.appendChild(c);
+}
+
+// bcs tv view
+function openBcs(){
+ mainView.style.display='none';
+ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+ document.getElementById('bcsView').classList.add('active');
+ renderBcs(selCat);
+}
+document.getElementById('backFromBcs').onclick=()=>{document.getElementById('bcsView').classList.remove('active');mainView.style.display='block';};
+function renderBcs(cat){
+ const catsEl=document.getElementById('bcsCats'); catsEl.innerHTML='';
+ cats.forEach(c=>{
+   const e=document.createElement('div');e.className='cat'+(c===cat?' on':'');e.textContent=c;
+   e.onclick=()=>{selCat=c;renderBcs(c);}; catsEl.appendChild(e);
+ });
+ const rail=document.getElementById('bcsChans'); rail.innerHTML='';
+ (chanData[cat]||[]).forEach((n,i)=>{
+   const c=document.createElement('div');c.className='card';c.tabIndex=0;
+   c.innerHTML=`<div class="thumb" style="background-image:url('${imgs[i%imgs.length]}')"></div><div class="grad"></div><div class="info"><div class="t">${n}</div><div class="s">${cat} • Live</div></div>`;
+   c.onclick=()=>play(n); rail.appendChild(c);
+ });
 }
 
 // files

@@ -27,7 +27,8 @@ class BcsTvActivity : AppCompatActivity() {
      * Beberapa kanal mungkin geo-restricted.
      */
     private val channels = listOf(
-        // ---- TV Lokal Indonesia (TVRI) ----
+        // ---- TV Lokal Indonesia (sumber resmi: TVRI & Metcom/Metro TV) ----
+        Channel("Metro TV", "TV Lokal", "https://edge.medcom.id/live-edge/smil:metro.smil/playlist.m3u8"),
         Channel("TVRI Nasional", "TV Lokal", "https://ott-balancer.tvri.go.id/live/eds/Nasional/hls/Nasional.m3u8"),
         Channel("TVRI World", "TV Lokal", "https://ott-balancer.tvri.go.id/live/eds/TVRIWorld/hls/TVRIWorld.m3u8"),
         Channel("TVRI Sport HD", "TV Lokal", "https://ott-balancer.tvri.go.id/live/eds/SportHD/hls/SportHD.m3u8"),

@@ -3,9 +3,14 @@ package com.bcs.launcher
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bcs.launcher.apps.AppDrawerActivity
 import com.bcs.launcher.bcs.BcsTvActivity
@@ -14,12 +19,26 @@ import com.bcs.launcher.media.MediaPlayerActivity
 import com.bcs.launcher.model.AppItem
 import com.bcs.launcher.settings.SettingsActivity
 import com.bcs.launcher.ui.AppsAdapter
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
+
+    private val handler = Handler(Looper.getMainLooper())
+    private val timeRunnable = object : Runnable {
+        override fun run() {
+            findViewById<TextView>(R.id.txtTime).text =
+                SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
+            handler.postDelayed(this, 1000 * 30)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        handler.post(timeRunnable)
 
         val items = listOf(
             AppItem("bcs_tv", getString(R.string.bcs_tv), R.drawable.ic_bcs_tv, action = AppItem.Action.BCS_TV),
@@ -32,8 +51,22 @@ class MainActivity : AppCompatActivity() {
         )
 
         val recycler = findViewById<RecyclerView>(R.id.recyclerApps)
-        recycler.layoutManager = GridLayoutManager(this, 5)
+        recycler.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recycler.adapter = AppsAdapter(items) { item -> handle(item) }
+
+        findViewById<Button>(R.id.btnHero).setOnClickListener {
+            startActivity(Intent(this, BcsTvActivity::class.java))
+        }
+
+        val quick = findViewById<LinearLayout>(R.id.quickCats)
+        listOf("TV Lokal", "K-Drama", "Olahraga", "Musik").forEach { name ->
+            val b = Button(this).apply {
+                text = name
+                isFocusable = true
+                setOnClickListener { startActivity(Intent(this@MainActivity, BcsTvActivity::class.java)) }
+            }
+            quick.addView(b)
+        }
     }
 
     private fun handle(item: AppItem) {
@@ -66,5 +99,10 @@ class MainActivity : AppCompatActivity() {
         } else {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(webUrl)))
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacks(timeRunnable)
     }
 }

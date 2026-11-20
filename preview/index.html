@@ -49,6 +49,9 @@ body{background:radial-gradient(1200px 600px at 20% -10%,#1a2a55 0%,transparent 
 .card.wide{width:260px;height:150px}
 .card.app{width:120px;height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:var(--surface)}
 .card .thumb{position:absolute;inset:0;background-size:cover;background-position:center}
+.card .thumb.logo-tile{display:grid;place-items:center;background-size:auto}
+.logo-tile .glow{position:absolute;width:170px;height:170px;border-radius:50%;background:rgba(255,255,255,.09);filter:blur(20px)}
+.logo-tile .initials{font-size:42px;font-weight:800;letter-spacing:1px;color:#fff;text-shadow:0 3px 14px rgba(0,0,0,.5);padding:12px;text-align:center;line-height:1;word-break:break-word;z-index:1}
 .card .grad{position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.85))}
 .card .info{position:absolute;left:10px;right:10px;bottom:10px;z-index:2}
 .card .info .t{font-size:13px;font-weight:600;line-height:1.2}
@@ -176,7 +179,22 @@ body{background:radial-gradient(1200px 600px at 20% -10%,#1a2a55 0%,transparent 
 
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script>
-const imgs=['https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?auto=format&fit=crop&w=400&q=60','https://images.unsplash.com/photo-1489599849927-2e318f0a6015?auto=format&fit=crop&w=400&q=60','https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?auto=format&fit=crop&w=400&q=60','https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=400&q=60','https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=400&q=60'];
+// Kartu memakai "tile inisial" yang deterministik dari nama kanal, bukan foto stok.
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function tileColor(n){
+ let h=0; for(let i=0;i<n.length;i++) h=(h*31+n.charCodeAt(i))|0;
+ const a=Math.abs(h)%360, b=(a+38)%360;
+ return 'linear-gradient(135deg,hsl('+a+' 62% 34%),hsl('+b+' 62% 18%))';
+}
+function tileInitials(n){
+ const p=n.replace(/[^\p{L}\p{N} ]/gu,' ').trim().split(/\s+/).filter(Boolean);
+ if(!p.length) return '?';
+ if(p[0].length<=5 && /^[A-Z0-9]+$/.test(p[0])) return p[0].slice(0,5);
+ return p.slice(0,3).map(x=>x[0]).join('').toUpperCase();
+}
+function tileHtml(n){
+ return '<div class="thumb logo-tile" style="background:'+tileColor(n)+'"><div class="glow"></div><span class="initials">'+esc(tileInitials(n))+'</span></div>';
+}
 
 const apps=[
  {label:'BCS TV',icon:'📺',color:'#1e88e5',action:()=>openBcs()},
@@ -278,7 +296,7 @@ function renderChans(cat){
    const n=typeof item==='string'?item:item.n;
    const u=typeof item==='string'?null:item.u;
    const c=document.createElement('div');c.className='card';c.tabIndex=0;
-   c.innerHTML=`<div class="thumb" style="background-image:url('${imgs[i%imgs.length]}')"></div><div class="grad"></div><div class="info"><div class="t">${n}</div><div class="s">${cat} • Live</div></div>`;
+   c.innerHTML=`${tileHtml(n)}<div class="grad"></div><div class="info"><div class="t">${esc(n)}</div><div class="s">${cat} • Live</div></div>`;
    c.onclick=()=>play(n,u); rail.appendChild(c);
  });
 }
@@ -288,7 +306,7 @@ const recs=document.getElementById('recs');
 const recData=['TVRI Nasional','BBC Earth','NASA TV Public','Red Bull TV','DW English','AsianCrush','Radio Paradise','CNA','Moonbug Kids','PBS Create'];
 recData.forEach((n,i)=>{
  const c=document.createElement('div');c.className='card';c.tabIndex=0;
- c.innerHTML=`<div class="thumb" style="background-image:url('${imgs[i%imgs.length]}')"></div><div class="grad"></div><div class="info"><div class="t">${n}</div><div class="s">Live • HD</div></div>`;
+ c.innerHTML=`${tileHtml(n)}<div class="grad"></div><div class="info"><div class="t">${esc(n)}</div><div class="s">Live • HD</div></div>`;
  c.onclick=()=>play(n); recs.appendChild(c);
 });
 
@@ -317,7 +335,7 @@ function renderBcs(cat){
    const n=typeof item==='string'?item:item.n;
    const u=typeof item==='string'?null:item.u;
    const c=document.createElement('div');c.className='card';c.tabIndex=0;
-   c.innerHTML=`<div class="thumb" style="background-image:url('${imgs[i%imgs.length]}')"></div><div class="grad"></div><div class="info"><div class="t">${n}</div><div class="s">${cat} • Live</div></div>`;
+   c.innerHTML=`${tileHtml(n)}<div class="grad"></div><div class="info"><div class="t">${esc(n)}</div><div class="s">${cat} • Live</div></div>`;
    c.onclick=()=>play(n,u); rail.appendChild(c);
  });
 }

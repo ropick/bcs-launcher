@@ -146,6 +146,7 @@ body{background:radial-gradient(1200px 600px at 20% -10%,#1a2a55 0%,transparent 
   <div class="content view" id="bcsView">
     <div class="row-head"><h2>BCS TV</h2><span id="backFromBcs" style="cursor:pointer;color:var(--accent)">← Kembali</span></div>
     <div class="cats" id="bcsCats"></div>
+    <div id="bcsStatus" style="color:var(--muted);font-size:13px;cursor:pointer;margin:8px 0"></div>
     <div class="rail" id="bcsChans" style="flex-wrap:wrap;overflow:visible"></div>
   </div>
 
@@ -203,7 +204,9 @@ document.getElementById('search').addEventListener('input',e=>{
  });
 });
 
-const cats=['TV Lokal','Film & Drama','Olahraga','Musik','Ilmu Pengetahuan','Berita','Anak','Lainnya'];
+const CAT_COMMUNITY='TV Lokal Komunitas';
+const DEFAULT_PLAYLIST_URL='https://raw.githubusercontent.com/iptv-org/iptv/master/streams/id.m3u';
+const cats=['TV Lokal',CAT_COMMUNITY,'Film & Drama','Olahraga','Musik','Ilmu Pengetahuan','Berita','Anak','Lainnya'];
 const catsEl=document.getElementById('cats');
 let selCat='TV Lokal';
 cats.forEach(c=>{
@@ -223,6 +226,7 @@ const chanData={
     {n:'TVRI Yogyakarta',u:'https://ott-balancer.tvri.go.id/live/eds/Jogjakarta/hls/Jogjakarta.m3u8'},
     {n:'TVRI Bali',u:'https://ott-balancer.tvri.go.id/live/eds/Bali/hls/Bali.m3u8'}
   ],
+  [CAT_COMMUNITY]:[],
   'Film & Drama':[
     {n:'AsianCrush',u:'https://linear-900.frequency.stream/dist/cineverse/900/hls/master/playlist.m3u8'},
     {n:'Bloomberg Originals',u:'https://bloomberg.com/media-manifest/streams/qt.m3u8'}
@@ -300,8 +304,14 @@ function renderBcs(cat){
  const catsEl=document.getElementById('bcsCats'); catsEl.innerHTML='';
  cats.forEach(c=>{
    const e=document.createElement('div');e.className='cat'+(c===cat?' on':'');e.textContent=c;
-   e.onclick=()=>{selCat=c;renderBcs(c);}; catsEl.appendChild(e);
+   e.onclick=()=>{selCat=c;renderBcs(c);};
+   if(c===CAT_COMMUNITY) e.ondblclick=changePlaylistUrl;
+   catsEl.appendChild(e);
  });
+ const statusEl=document.getElementById('bcsStatus');
+ statusEl.style.display=(cat===CAT_COMMUNITY)?'':'none';
+ statusEl.textContent=playlistStatus;
+ statusEl.onclick=loadCommunityPlaylist;
  const rail=document.getElementById('bcsChans'); rail.innerHTML='';
  (chanData[cat]||[]).forEach((item,i)=>{
    const n=typeof item==='string'?item:item.n;
@@ -311,6 +321,44 @@ function renderBcs(cat){
    c.onclick=()=>play(n,u); rail.appendChild(c);
  });
 }
+
+let playlistStatus='Memuat playlist komunitas...';
+function updateBcsStatus(){ const el=document.getElementById('bcsStatus'); if(el) el.textContent=playlistStatus; }
+async function loadCommunityPlaylist(){
+ const url=localStorage.getItem('bcs_playlist_url')||DEFAULT_PLAYLIST_URL;
+ playlistStatus='Memuat playlist dari '+url+' ...'; updateBcsStatus();
+ try{
+  const r=await fetch(url,{cache:'no-store'});
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  const text=await r.text();
+  const out=[]; let name=null; const seen=new Set();
+  text.split(/\r?\n/).forEach(raw=>{
+   const line=raw.trim();
+   if(/^#EXTINF/i.test(line)){
+    name=line.split(',').pop().replace(/\s*\[[^\]]*\]/g,'').replace(/\s*\([^)]*\)/g,'').trim();
+   }else if(/^https?:\/\//i.test(line)&&name){
+    if(!seen.has(line)){ seen.add(line); out.push({n:name,u:line}); }
+    name=null;
+   }
+  });
+  chanData[CAT_COMMUNITY]=out;
+  playlistStatus=out.length+' kanal komunitas • klik untuk muat ulang • klik 2x kategori untuk ganti URL';
+ }catch(e){
+  chanData[CAT_COMMUNITY]=[];
+  playlistStatus='Gagal memuat playlist: '+e.message+' • klik untuk coba lagi';
+ }
+ updateBcsStatus();
+ if(selCat===CAT_COMMUNITY) renderBcs(selCat);
+}
+function changePlaylistUrl(){
+ const cur=localStorage.getItem('bcs_playlist_url')||DEFAULT_PLAYLIST_URL;
+ const v=prompt('URL playlist M3U:',cur);
+ if(v===null) return;
+ if(v.trim()) localStorage.setItem('bcs_playlist_url',v.trim());
+ else localStorage.removeItem('bcs_playlist_url');
+ loadCommunityPlaylist();
+}
+loadCommunityPlaylist();
 
 // files
 const fileTree={

@@ -30,3 +30,32 @@ Catatan:
 - Modul `media3-exoplayer-hls` wajib ada agar ExoPlayer bisa memutar `.m3u8`.
 - Konten on-demand berlisensi (Netflix, Viu, Vidio, WeTV, dll.) sengaja tidak
   dimasukkan karena tidak menyediakan URL stream publik yang legal.
+
+## BCS TV - TV lokal lengkap (playlist komunitas)
+
+Kanal swasta seperti RCTI, SCTV, Indosiar, GTV, ANTV, tvOne, Trans TV dll. **tidak
+menyediakan HLS publik resmi** (mereka pakai app OTT ber-login + DRM). Untuk
+itu tersedia kategori **TV Lokal Komunitas** yang mengambil file M3U dari URL
+saat aplikasi dibuka, jadi daftar kanal bisa diperbarui **tanpa rebuild APK**.
+
+- Default: `https://raw.githubusercontent.com/iptv-org/iptv/master/streams/id.m3u`
+- Ganti URL: **tahan lama** kategori `TV Lokal Komunitas` di Android TV, atau
+  **klik 2x** kategori tersebut di preview web. Tombol "Reset" mengembalikan URL default.
+- Muat ulang: ketuk teks status di bawah kategori (Android) / klik teks status (web).
+- URL tersimpan di `SharedPreferences` (`bcs_tv / playlist_url`).
+- Entri tanpa URL, duplikat, dan label `[Not 24/7]` / `[Geo-blocked]` / `(720p)`
+  dibersihkan otomatis saat parsing.
+
+Contoh playlist lain yang bisa ditempel:
+```
+https://raw.githubusercontent.com/iptv-org/iptv/master/streams/id.m3u
+https://example.com/playlist.m3u
+```
+
+URL harus diawali `http://` atau `https://`.
+
+Peringatan: kanal dari playlist komunitas umumnya adalah **re-stream pihak
+ketiga**, bukan CDN resmi broadcaster. Kualitas dan ketersediaannya tidak
+dijamin, beberapa geo-blocked, dan status hukumnya abu-abu. Kanal resmi
+(TVRI/Metro TV) tetap tersedia di kategori `TV Lokal` sebagai fallback.
+

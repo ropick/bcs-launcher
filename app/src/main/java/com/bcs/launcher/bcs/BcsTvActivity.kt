@@ -1,30 +1,48 @@
 package com.bcs.launcher.bcs
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bcs.launcher.R
 import com.bcs.launcher.media.MediaPlayerActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.URL
 
 class BcsTvActivity : AppCompatActivity() {
 
+    companion object {
+        private const val CAT_COMMUNITY = "TV Lokal Komunitas"
+        private const val DEFAULT_PLAYLIST_URL =
+            "https://raw.githubusercontent.com/iptv-org/iptv/master/streams/id.m3u"
+        private const val PREF_NAME = "bcs_tv"
+        private const val PREF_PLAYLIST_URL = "playlist_url"
+    }
+
     private val categories = listOf(
-        "TV Lokal", "Film & Drama", "Olahraga", "Musik",
+        "TV Lokal", CAT_COMMUNITY, "Film & Drama", "Olahraga", "Musik",
         "Ilmu Pengetahuan", "Berita", "Anak", "Lainnya"
     )
 
     /**
-     * Daftar kanal resmi / free-to-air yang dipublikasikan langsung oleh
-     * broadcaster atau mitra resminya (bukan re-stream / konten bajakan).
-     * Beberapa kanal mungkin geo-restricted.
+     * Sumber resmi / free-to-air yang dipublikasikan langsung oleh broadcaster.
+     * Dipakai sebagai fallback saat playlist komunitas gagal dimuat.
      */
     private val channels = listOf(
         // ---- TV Lokal Indonesia (sumber resmi: TVRI & Metcom/Metro TV) ----
@@ -84,6 +102,8 @@ class BcsTvActivity : AppCompatActivity() {
         Channel("CCTV-13", "Lainnya", "https://ldncctvwbcdali.v.myalicdn.com/ldncctvwbcd/cdrmldcctv13_1/index.m3u8")
     )
 
+    /** Diisi dari playlist M3U saat aplikasi berjalan (bisa diganti tanpa rebuild APK). */
+    private var communityChannels: List<Channel> = emptyList()
     private var selectedCategory = categories.first()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -91,6 +111,9 @@ class BcsTvActivity : AppCompatActivity() {
         setContentView(R.layout.activity_bcs_tv)
 
         findViewById<View>(R.id.btnBack).setOnClickListener { finish() }
+
+        val status = findViewById<TextView>(R.id.txtPlaylistStatus)
+        status.setOnClickListener { loadCommunityPlaylist() }
 
         val row = findViewById<LinearLayout>(R.id.categoryRow)
         categories.forEach { cat ->
@@ -101,16 +124,35 @@ class BcsTvActivity : AppCompatActivity() {
                     selectedCategory = cat
                     refresh()
                 }
+                // Tahan lama kategori komunitas untuk mengganti URL playlist
+                setOnLongClickListener {
+                    if (cat == CAT_COMMUNITY) {
+                        showPlaylistUrlDialog()
+                        true
+                    } else {
+                        false
+                    }
+                }
             }
             row.addView(btn)
         }
 
         findViewById<RecyclerView>(R.id.recyclerChannels).layoutManager = LinearLayoutManager(this)
         refresh()
+        loadCommunityPlaylist()
     }
 
     private fun refresh() {
-        val filtered = channels.filter { it.category == selectedCategory }
+        val filtered = if (selectedCategory == CAT_COMMUNITY) {
+            (channels.filter { it.category == "TV Lokal" } + communityChannels)
+                .distinctBy { it.name }
+        } else {
+            channels.filter { it.category == selectedCategory }
+        }
+
+        findViewById<View>(R.id.txtPlaylistStatus).visibility =
+            if (selectedCategory == CAT_COMMUNITY) View.VISIBLE else View.GONE
+
         val adapter = ChannelAdapter(filtered) { ch ->
             val i = Intent(this, MediaPlayerActivity::class.java)
             i.putExtra("url", ch.url)
@@ -118,6 +160,114 @@ class BcsTvActivity : AppCompatActivity() {
             startActivity(i)
         }
         findViewById<RecyclerView>(R.id.recyclerChannels).adapter = adapter
+    }
+
+    private fun playlistUrl(): String {
+        val prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        return prefs.getString(PREF_PLAYLIST_URL, DEFAULT_PLAYLIST_URL) ?: DEFAULT_PLAYLIST_URL
+    }
+
+    private fun updateStatus(message: String) {
+        findViewById<TextView>(R.id.txtPlaylistStatus).text = message
+    }
+
+    private fun loadCommunityPlaylist() {
+        val url = playlistUrl()
+        updateStatus("Memuat playlist komunitas dari $url ...")
+        lifecycleScope.launch(Dispatchers.IO) {
+            val result = runCatching { fetchPlaylist(url) }
+            withContext(Dispatchers.Main) {
+                result.onSuccess { list ->
+                    communityChannels = list
+                    updateStatus(
+                        "${list.size} kanal komunitas • ketuk untuk muat ulang • " +
+                            "tahan kategori '$CAT_COMMUNITY' untuk ganti URL"
+                    )
+                    if (selectedCategory == CAT_COMMUNITY) refresh()
+                }.onFailure { e ->
+                    communityChannels = emptyList()
+                    updateStatus(
+                        "Gagal memuat playlist (${e.message ?: "unknown"}). " +
+                            "Kanal TVRI/Metro tetap tersedia. Ketuk untuk coba lagi."
+                    )
+                    if (selectedCategory == CAT_COMMUNITY) refresh()
+                }
+            }
+        }
+    }
+
+    private fun fetchPlaylist(url: String): List<Channel> {
+        val conn = URL(url).openConnection() as HttpURLConnection
+        return try {
+            conn.connectTimeout = 15_000
+            conn.readTimeout = 20_000
+            conn.setRequestProperty("User-Agent", "BCS-Launcher/1.0")
+            val text = conn.inputStream.use { stream ->
+                BufferedReader(InputStreamReader(stream, Charsets.UTF_8)).use { it.readText() }
+            }
+            parseM3u(text)
+        } finally {
+            conn.disconnect()
+        }
+    }
+
+    private fun parseM3u(text: String): List<Channel> {
+        val result = mutableListOf<Channel>()
+        var pendingName: String? = null
+        text.lines().forEach { raw ->
+            val line = raw.trim()
+            when {
+                line.startsWith("#EXTINF", ignoreCase = true) -> {
+                    pendingName = cleanChannelName(line.substringAfterLast(",", ""))
+                }
+                line.startsWith("http://", ignoreCase = true) ||
+                    line.startsWith("https://", ignoreCase = true) -> {
+                    pendingName?.let { name ->
+                        if (name.isNotBlank()) result.add(Channel(name, CAT_COMMUNITY, line))
+                    }
+                    pendingName = null
+                }
+                line.startsWith("#") -> Unit
+            }
+        }
+        return result
+            .distinctBy { it.url }
+            .distinctBy { it.name }
+    }
+
+    /** Buang label seperti "[Not 24/7]", "[Geo-blocked]" dan "(720p)". */
+    private fun cleanChannelName(raw: String): String = raw
+        .replace(Regex("\\s*\\[[^]]*\\]"), "")
+        .replace(Regex("\\s*\\([^)]*\\)"), "")
+        .trim()
+        .ifEmpty { "Channel" }
+
+    private fun showPlaylistUrlDialog() {
+        val prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        val input = EditText(this).apply {
+            setText(playlistUrl())
+            hint = "https://contoh.com/playlist.m3u"
+            isSingleLine = true
+        }
+        AlertDialog.Builder(this)
+            .setTitle("URL playlist TV lokal")
+            .setMessage("Isi dengan URL file M3U. Contoh:\n$DEFAULT_PLAYLIST_URL")
+            .setView(input)
+            .setPositiveButton("Simpan & muat") { _, _ ->
+                val value = input.text.toString().trim()
+                if (!value.startsWith("http://") && !value.startsWith("https://")) {
+                    Toast.makeText(this, "URL harus diawali http:// atau https://", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+                prefs.edit().putString(PREF_PLAYLIST_URL, value).apply()
+                loadCommunityPlaylist()
+            }
+            .setNeutralButton("Reset") { _, _ ->
+                prefs.edit().remove(PREF_PLAYLIST_URL).apply()
+                loadCommunityPlaylist()
+            }
+            .setNegativeButton("Batal", null)
+            .show()
     }
 }
 

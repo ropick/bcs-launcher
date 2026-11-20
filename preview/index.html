@@ -15,7 +15,6 @@ html,body{height:100%}
 body{background:radial-gradient(1200px 600px at 20% -10%,#1a2a55 0%,transparent 60%),radial-gradient(900px 500px at 90% 10%,#2a1a4a 0%,transparent 55%),var(--bg);color:var(--text);font-family:"Segoe UI",system-ui,-apple-system,sans-serif;overflow:hidden}
 .app{height:100vh;display:flex;flex-direction:column}
 
-/* Top bar */
 .topbar{display:flex;align-items:center;gap:24px;padding:18px 40px;background:linear-gradient(180deg,rgba(7,11,18,.9),transparent);z-index:5}
 .logo{display:flex;align-items:center;gap:10px;font-size:26px;font-weight:800;letter-spacing:.5px}
 .logo .mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;font-size:18px}
@@ -26,7 +25,6 @@ body{background:radial-gradient(1200px 600px at 20% -10%,#1a2a55 0%,transparent 
 .clock{font-size:15px;color:var(--muted);font-variant-numeric:tabular-nums}
 .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--gold));display:grid;place-items:center;font-weight:700}
 
-/* Hero */
 .hero{margin:8px 40px 16px;height:230px;border-radius:20px;position:relative;overflow:hidden;background:#000;box-shadow:var(--shadow)}
 .hero-slide{position:absolute;inset:0;display:flex;align-items:flex-end;padding:28px;transition:opacity .6s}
 .hero-slide .bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.55)}
@@ -40,12 +38,11 @@ body{background:radial-gradient(1200px 600px at 20% -10%,#1a2a55 0%,transparent 
 .hero-dots span{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35)}
 .hero-dots span.on{background:#fff;width:22px;border-radius:4px}
 
-/* Rows */
 .content{flex:1;overflow-y:auto;padding:0 40px 40px;scrollbar-width:thin}
 .row{margin-bottom:26px}
 .row-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .row-head h2{font-size:20px;font-weight:700}
-.row-head span{color:var(--muted);font-size:13px}
+.row-head span{color:var(--muted);font-size:13px;cursor:pointer}
 .rail{display:flex;gap:14px;overflow-x:auto;padding:6px 2px 12px;scroll-snap-type:x mandatory;scrollbar-width:none}
 .rail::-webkit-scrollbar{display:none}
 .card{flex:0 0 auto;width:150px;height:210px;border-radius:12px;position:relative;overflow:hidden;background:var(--card);cursor:pointer;scroll-snap-align:start;transition:transform .18s,box-shadow .18s;outline:none}
@@ -61,36 +58,42 @@ body{background:radial-gradient(1200px 600px at 20% -10%,#1a2a55 0%,transparent 
 .card:focus,.card:hover{transform:scale(1.06);box-shadow:0 12px 28px rgba(0,0,0,.5);z-index:3}
 .card:focus{outline:3px solid var(--accent)}
 
-/* BCS TV categories */
 .cats{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
 .cat{padding:7px 13px;border-radius:999px;background:rgba(255,255,255,.06);cursor:pointer;font-size:13px;border:1px solid rgba(255,255,255,.08)}
 .cat.on{background:var(--accent);border-color:var(--accent)}
 
-/* Modal player */
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:20;backdrop-filter:blur(6px)}
 .modal.show{display:flex}
 .playerbox{width:min(900px,92vw);aspect-ratio:16/9;background:#000;border-radius:16px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
-.playerbox .screen{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0a0f1f,#1a1030)}
+.playerbox .screen{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0a0f1f,#1a1030);flex-direction:column;gap:10px}
+.playerbox .screen .big{font-size:64px}
 .playerbox .controls{position:absolute;bottom:0;left:0;right:0;padding:14px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.8));display:flex;align-items:center;gap:12px}
 .playerbox .controls button{background:rgba(255,255,255,.15);border:none;color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer}
 .playerbox .title{position:absolute;top:14px;left:16px;font-weight:700}
 .close{position:absolute;top:12px;right:12px;background:rgba(255,255,255,.15);border:none;color:#fff;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:18px}
+.progress{flex:1;height:4px;background:rgba(255,255,255,.2);border-radius:2px;overflow:hidden;cursor:pointer}
+.progress .bar{height:100%;background:var(--accent);width:0%}
 
-/* Files */
+.view{display:none}.view.active{display:block}
+
 .filelist{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
 .file{background:var(--surface);padding:12px;border-radius:10px;display:flex;align-items:center;gap:10px;cursor:pointer}
 .file .ic{font-size:22px}
 .file:hover{background:var(--surface2)}
+.file.selected{outline:2px solid var(--accent)}
 
-/* Footer hint */
+.appgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px}
+
 .hint{color:var(--muted);font-size:12px;padding:6px 40px 14px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--surface2);padding:10px 16px;border-radius:10px;opacity:0;transition:.3s;pointer-events:none;z-index:30}
+.toast.show{opacity:1}
 </style>
 </head>
 <body>
 <div class="app">
   <div class="topbar">
     <div class="logo"><div class="mark">B</div>BCS Launcher</div>
-    <div class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input placeholder="Cari aplikasi, channel, film..."></div>
+    <div class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input id="search" placeholder="Cari aplikasi, channel, film..."></div>
     <div class="clock" id="clock">--:--</div>
     <div class="avatar">R</div>
   </div>
@@ -99,75 +102,107 @@ body{background:radial-gradient(1200px 600px at 20% -10%,#1a2a55 0%,transparent 
     <div class="hero-slide">
       <div class="bg" style="background-image:url('https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=1200&q=60')"></div>
       <div class="content">
-        <h1>BCS TV Premium</h1>
-        <p>TV lokal Indonesia, drama Korea & China, olahraga, musik — lengkap dalam satu launcher.</p>
-        <div class="btns"><button class="btn" onclick="play('BCS TV - Live')">▶ Tonton Sekarang</button><button class="btn ghost">+ Daftar Saya</button></div>
+        <h1 id="heroTitle">BCS TV Premium</h1>
+        <p id="heroDesc">TV lokal, drama Korea &amp; China, olahraga, musik — lengkap dalam satu launcher.</p>
+        <div class="btns"><button class="btn" id="heroPlay">▶ Tonton Sekarang</button><button class="btn ghost" id="heroList">+ Daftar Saya</button></div>
       </div>
     </div>
-    <div class="hero-dots"><span class="on"></span><span></span><span></span></div>
+    <div class="hero-dots" id="heroDots"></div>
   </div>
 
-  <div class="content">
-    <div class="row">
-      <div class="row-head"><h2>Aplikasi</h2><span>Lihat semua</span></div>
+  <div class="content" id="mainView">
+    <div class="row" id="appsRow">
+      <div class="row-head"><h2>Aplikasi</h2><span id="seeApps">Lihat semua</span></div>
       <div class="rail" id="apps"></div>
     </div>
 
-    <div class="row">
-      <div class="row-head"><h2>BCS TV — Live & Channel</h2><span>Kategori</span></div>
+    <div class="row" id="bcsRow">
+      <div class="row-head"><h2>BCS TV — Live &amp; Channel</h2><span id="seeAllChans">Semua channel</span></div>
       <div class="cats" id="cats"></div>
       <div class="rail" id="chans"></div>
     </div>
 
-    <div class="row">
+    <div class="row" id="recRow">
       <div class="row-head"><h2>Rekomendasi untuk Anda</h2><span>Lihat semua</span></div>
       <div class="rail" id="recs"></div>
     </div>
 
-    <div class="row">
-      <div class="row-head"><h2>File Manager</h2><span>Penyimpanan</span></div>
+    <div class="row" id="filesRow">
+      <div class="row-head"><h2>File Manager</h2><span id="openFiles">Buka</span></div>
       <div class="filelist" id="files"></div>
     </div>
   </div>
-  <div class="hint">Preview web — navigasi dengan mouse/keyboard (panah). Bukan aplikasi Android asli.</div>
+
+  <div class="content view" id="appsView">
+    <div class="row-head"><h2>Semua Aplikasi</h2><span id="backFromApps" style="cursor:pointer;color:var(--accent)">← Kembali</span></div>
+    <div class="appgrid" id="appgrid"></div>
+  </div>
+
+  <div class="content view" id="filesView">
+    <div class="row-head"><h2 id="filesPath">/storage</h2><span id="backFromFiles" style="cursor:pointer;color:var(--accent)">← Kembali</span></div>
+    <div class="filelist" id="filelist2"></div>
+  </div>
+
+  <div class="hint">Preview web interaktif — navigasi mouse/keyboard. Bukan aplikasi Android asli.</div>
 </div>
 
 <div class="modal" id="modal">
   <div class="playerbox">
-    <div class="screen"></div>
+    <div class="screen">
+      <div class="big">▶</div>
+      <div id="mNow" style="color:var(--muted)">Memutar...</div>
+    </div>
     <div class="title" id="mtitle">Memutar</div>
     <button class="close" onclick="closeModal()">✕</button>
     <div class="controls">
-      <button>⏮</button><button>⏸</button><button>⏭</button>
-      <div style="flex:1;height:4px;background:rgba(255,255,255,.2);border-radius:2px;overflow:hidden"><div style="width:35%;height:100%;background:var(--accent)"></div></div>
-      <button>🔊</button><button>⛶</button>
+      <button id="btnPrev">⏮</button>
+      <button id="btnPlay">⏸</button>
+      <button id="btnNext">⏭</button>
+      <div class="progress" id="progress"><div class="bar" id="bar"></div></div>
+      <button>🔊</button>
+      <button>⛶</button>
     </div>
   </div>
 </div>
 
+<div class="toast" id="toast"></div>
+
 <script>
+const imgs=['https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?auto=format&fit=crop&w=400&q=60','https://images.unsplash.com/photo-1489599849927-2e318f0a6015?auto=format&fit=crop&w=400&q=60','https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?auto=format&fit=crop&w=400&q=60','https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=400&q=60','https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=400&q=60'];
+
 const apps=[
- {label:'BCS TV',icon:'📺',color:'#1e88e5'},
- {label:'YouTube',icon:'▶',color:'#ff0000'},
- {label:'YT Music',icon:'🎵',color:'#ff0000'},
- {label:'Files',icon:'📁',color:'#ffc107'},
- {label:'Media',icon:'🎬',color:'#9c27b0'},
- {label:'Browser',icon:'🌐',color:'#4caf50'},
- {label:'Settings',icon:'⚙',color:'#607d8b'},
- {label:'Store',icon:'🛒',color:'#00bcd4'},
+ {label:'BCS TV',icon:'📺',color:'#1e88e5',action:()=>openView('bcs')},
+ {label:'YouTube',icon:'▶',color:'#ff0000',action:()=>play('YouTube (preview)')},
+ {label:'YT Music',icon:'🎵',color:'#ff0000',action:()=>play('YouTube Music (preview)')},
+ {label:'Files',icon:'📁',color:'#ffc107',action:()=>openFiles('/')},
+ {label:'Media',icon:'🎬',color:'#9c27b0',action:()=>play('Media Player (preview)')},
+ {label:'Browser',icon:'🌐',color:'#4caf50',action:()=>toast('Browser (preview)')},
+ {label:'Settings',icon:'⚙',color:'#607d8b',action:()=>toast('Pengaturan (preview)')},
+ {label:'Store',icon:'🛒',color:'#00bcd4',action:()=>toast('Store (preview)')},
 ];
 const appsRail=document.getElementById('apps');
 apps.forEach(a=>{
- const c=document.createElement('div');c.className='card app';c.tabIndex=0;
+ const c=document.createElement('div');c.className='card app';c.tabIndex=0;c.dataset.label=a.label.toLowerCase();
  c.innerHTML=`<div class="icon">${a.icon}</div><div class="label">${a.label}</div>`;
  c.style.background=`linear-gradient(160deg,${a.color}33,${a.color}11)`;
- appsRail.appendChild(c);
+ c.onclick=a.action; appsRail.appendChild(c);
+});
+
+// search
+document.getElementById('search').addEventListener('input',e=>{
+ const q=e.target.value.toLowerCase();
+ document.querySelectorAll('#apps .card').forEach(c=>{
+   c.style.display = c.dataset.label.includes(q)?'':'none';
+ });
 });
 
 const cats=['TV Lokal','K-Drama','C-Drama','Olahraga','Musik','Berita','Anak'];
 const catsEl=document.getElementById('cats');
-cats.forEach((c,i)=>{const e=document.createElement('div');e.className='cat'+(i===0?' on':'');e.textContent=c;e.onclick=()=>{catsEl.querySelectorAll('.cat').forEach(x=>x.classList.remove('on'));e.classList.add('on');renderChans(c);};catsEl.appendChild(e);});
-
+let selCat='TV Lokal';
+cats.forEach(c=>{
+ const e=document.createElement('div');e.className='cat'+(c===selCat?' on':'');e.textContent=c;
+ e.onclick=()=>{selCat=c;catsEl.querySelectorAll('.cat').forEach(x=>x.classList.remove('on'));e.classList.add('on');renderChans(c);}; catsEl.appendChild(e);
+});
 const chanData={
  'TV Lokal':['RCTI','SCTV','Indosiar','Trans TV','Metro TV'],
  'K-Drama':['K-Drama 1','K-Drama 2','K-Drama 3','Hospital Playlist'],
@@ -177,36 +212,126 @@ const chanData={
  'Berita':['News 1','News 2'],
  'Anak':['Kids 1','Kids 2']
 };
-const imgs=['https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?auto=format&fit=crop&w=400&q=60','https://images.unsplash.com/photo-1489599849927-2e318f0a6015?auto=format&fit=crop&w=400&q=60','https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?auto=format&fit=crop&w=400&q=60','https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=400&q=60'];
 function renderChans(cat){
  const rail=document.getElementById('chans'); rail.innerHTML='';
  (chanData[cat]||[]).forEach((n,i)=>{
    const c=document.createElement('div');c.className='card';c.tabIndex=0;
-   c.innerHTML=`<div class="thumb" style="background-image:url('${imgs[i%imgs.length]}')"></div><div class="grad"></div><div class="info"><div class="t">${n}</div><div class="s">Live</div></div>`;
+   c.innerHTML=`<div class="thumb" style="background-image:url('${imgs[i%imgs.length]}')"></div><div class="grad"></div><div class="info"><div class="t">${n}</div><div class="s">${cat} • Live</div></div>`;
    c.onclick=()=>play(n); rail.appendChild(c);
  });
 }
-renderChans('TV Lokal');
+renderChans(selCat);
 
 const recs=document.getElementById('recs');
-for(let i=0;i<8;i++){
+for(let i=0;i<10;i++){
  const c=document.createElement('div');c.className='card';c.tabIndex=0;
- c.innerHTML=`<div class="thumb" style="background-image:url('${imgs[i%imgs.length]}')"></div><div class="grad"></div><div class="info"><div class="t">Title ${i+1}</div><div class="s">2024 • HD</div></div>`;
- c.onclick=()=>play('Title '+(i+1)); recs.appendChild(c);
+ c.innerHTML=`<div class="thumb" style="background-image:url('${imgs[i%imgs.length]}')"></div><div class="grad"></div><div class="info"><div class="t">Judul ${i+1}</div><div class="s">2024 • HD</div></div>`;
+ c.onclick=()=>play('Judul '+(i+1)); recs.appendChild(c);
 }
 
-const files=[{n:'DCIM',ic:'📁'},{n:'Download',ic:'📁'},{n:'Movies',ic:'📁'},{n:'video.mp4',ic:'🎬'},{n:'photo.jpg',ic:'🖼'},{n:'song.mp3',ic:'🎵'}];
-const fl=document.getElementById('files');
-files.forEach(f=>{const d=document.createElement('div');d.className='file';d.tabIndex=0;d.innerHTML=`<span class="ic">${f.ic}</span><span>${f.n}</span>`;d.onclick=()=>{if(f.n.endsWith('.mp4'))play(f.n);else alert(f.n);};fl.appendChild(d);});
+// files
+const fileTree={
+ '/':['DCIM','Download','Movies','Music','Documents','video.mp4','photo.jpg','song.mp3'],
+ '/DCIM':['IMG_001.jpg','IMG_002.jpg','VID_001.mp4'],
+ '/Download':['app.apk','doc.pdf'],
+ '/Movies':['movie.mkv','trailer.mp4'],
+ '/Music':['song.mp3','album.flac'],
+ '/Documents':['readme.txt']
+};
+let cwd='/';
+function renderFiles(path,el){
+ el.innerHTML='';
+ const items=fileTree[path]||[];
+ // parent
+ if(path!=='/'){
+   const up=document.createElement('div');up.className='file';up.innerHTML='<span class="ic">⬆️</span><span>.. (atas)</span>';
+   up.onclick=()=>openFiles(parentPath(path)); el.appendChild(up);
+ }
+ items.forEach(n=>{
+   const isDir=fileTree[path+'/'+n]!==undefined || ['DCIM','Download','Movies','Music','Documents'].includes(n);
+   const d=document.createElement('div');d.className='file';d.innerHTML=`<span class="ic">${isDir?'📁':'📄'}</span><span>${n}</span>`;
+   d.onclick=()=>{ if(isDir) openFiles(path==='/'?'/'+n:path+'/'+n); else if(n.endsWith('.mp4')||n.endsWith('.mkv')) play(n); else toast(n); };
+   el.appendChild(d);
+ });
+ document.getElementById('filesPath').textContent=path;
+}
+function parentPath(p){const parts=p.split('/').filter(Boolean);parts.pop();return parts.length?'/'+parts.join('/'):'/';}
+function openFiles(path){
+ cwd=path;
+ // main view files list
+ renderFiles(path,document.getElementById('files'));
+ renderFiles(path,document.getElementById('filelist2'));
+ showView('filesView');
+}
+renderFiles('/',document.getElementById('files'));
 
-function play(t){document.getElementById('mtitle').textContent=t;document.getElementById('modal').classList.add('show');}
-function closeModal(){document.getElementById('modal').classList.remove('show');}
+// app grid
+const appgrid=document.getElementById('appgrid');
+apps.forEach(a=>{
+ const d=document.createElement('div');d.className='card app';d.tabIndex=0;d.innerHTML=`<div class="icon">${a.icon}</div><div class="label">${a.label}</div>`;
+ d.style.background=`linear-gradient(160deg,${a.color}33,${a.color}11)`;
+ d.onclick=a.action; appgrid.appendChild(d);
+});
+
+// views
+function showView(id){
+ document.getElementById('mainView').classList.remove('active');
+ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+ if(id==='mainView'){document.getElementById('mainView').classList.add('active');}
+ else document.getElementById(id).classList.add('active');
+}
+// main view is div not .view; handle
+const mainView=document.getElementById('mainView');
+function showMain(){ mainView.style.display='block'; document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); }
+function openView(v){ if(v==='bcs') showMain(); }
+document.getElementById('seeApps').onclick=()=>{mainView.style.display='none';document.getElementById('appsView').classList.add('active');};
+document.getElementById('backFromApps').onclick=()=>{document.getElementById('appsView').classList.remove('active');mainView.style.display='block';};
+document.getElementById('openFiles').onclick=()=>openFiles('/');
+document.getElementById('backFromFiles').onclick=()=>{document.getElementById('filesView').classList.remove('active');mainView.style.display='block';};
+document.getElementById('seeAllChans').onclick=()=>toast('Semua channel (preview)');
+
+// hero
+const heroTitles=['BCS TV Premium','Drama Korea Terbaru','Olahraga Live'];
+const heroDescs=['TV lokal, drama Korea & China, olahraga, musik — lengkap.','Update episode setiap hari.','Liga, badminton, dan lainnya live.'];
+let heroIdx=0;
+const heroDots=document.getElementById('heroDots');
+heroTitles.forEach((_,i)=>{const s=document.createElement('span');if(i===0)s.classList.add('on');heroDots.appendChild(s);});
+function rotateHero(){
+ heroIdx=(heroIdx+1)%heroTitles.length;
+ document.getElementById('heroTitle').textContent=heroTitles[heroIdx];
+ document.getElementById('heroDesc').textContent=heroDescs[heroIdx];
+ heroDots.querySelectorAll('span').forEach((s,i)=>s.classList.toggle('on',i===heroIdx));
+}
+setInterval(rotateHero,5000);
+document.getElementById('heroPlay').onclick=()=>play('BCS TV - Live');
+document.getElementById('heroList').onclick=()=>toast('Ditambahkan ke daftar');
+
+// player
+let playing=true,progress=0,progressTimer=null;
+function play(t){
+ document.getElementById('mtitle').textContent=t;
+ document.getElementById('mNow').textContent=t;
+ document.getElementById('modal').classList.add('show');
+ progress=0; playing=true; updatePlayBtn();
+ if(progressTimer)clearInterval(progressTimer);
+ progressTimer=setInterval(()=>{if(playing){progress=Math.min(100,progress+0.5);document.getElementById('bar').style.width=progress+'%';if(progress>=100){playing=false;updatePlayBtn();}}},100);
+}
+function closeModal(){document.getElementById('modal').classList.remove('show');if(progressTimer)clearInterval(progressTimer);}
+function updatePlayBtn(){document.getElementById('btnPlay').textContent=playing?'⏸':'▶';}
+document.getElementById('btnPlay').onclick=()=>{playing=!playing;updatePlayBtn();};
+document.getElementById('btnPrev').onclick=()=>{progress=Math.max(0,progress-10);document.getElementById('bar').style.width=progress+'%';};
+document.getElementById('btnNext').onclick=()=>{progress=Math.min(100,progress+10);document.getElementById('bar').style.width=progress+'%';};
+document.getElementById('progress').onclick=e=>{const r=e.currentTarget.getBoundingClientRect();progress=((e.clientX-r.left)/r.width)*100;document.getElementById('bar').style.width=progress+'%';};
+
+// toast
+let toastTimer;
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),1800);}
 
 // clock
 function tick(){const d=new Date();document.getElementById('clock').textContent=d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});}
 tick();setInterval(tick,1000);
 
-// keyboard nav: arrows move focus among focusable
+// keyboard
 document.addEventListener('keydown',e=>{
  if(e.key==='Escape')closeModal();
  const f=document.activeElement;
@@ -217,7 +342,10 @@ document.addEventListener('keydown',e=>{
  let next=-1;
  if(e.key==='ArrowRight')next=idx+1;
  if(e.key==='ArrowLeft')next=idx-1;
- if(next>=0 && next<all.length){all[next].focus();e.preventDefault();}
+ if(e.key==='ArrowDown')next=Math.min(all.length-1,idx+6);
+ if(e.key==='ArrowUp')next=Math.max(0,idx-6);
+ if(next>=0 && next<all.length && next!==idx){all[next].focus();e.preventDefault();}
+ if(e.key==='Enter' && f.onclick){f.click();e.preventDefault();}
 });
 </script>
 </body>

@@ -22,7 +22,12 @@ class MediaPlayerActivity : AppCompatActivity() {
 
         findViewById<View>(R.id.btnBack).setOnClickListener { finish() }
 
-        player = ExoPlayer.Builder(this).build()
+        val dataSourceFactory = androidx.media3.datasource.DefaultHttpDataSource.Factory()
+            .setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+            .setAllowCrossProtocolRedirects(true)
+        player = ExoPlayer.Builder(this).setMediaSourceFactory(
+            androidx.media3.exoplayer.source.DefaultMediaSourceFactory(dataSourceFactory)
+        ).build()
         val playerView = findViewById<PlayerView>(R.id.playerView)
         playerView.player = player
 

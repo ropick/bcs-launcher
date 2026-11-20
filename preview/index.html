@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BCS Launcher - Preview</title>
+<style>
+  :root{--bg:#0D1117;--surface:#161B22;--surface2:#21262D;--text:#F0F6FC;--muted:#8B949E;--accent:#58A6FF;--primary:#1E88E5}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:system-ui,sans-serif;height:100vh;overflow:hidden}
+  header{padding:24px 32px;font-size:32px;font-weight:700}
+  .grid{display:grid;grid-template-columns:repeat(5,140px);gap:16px;padding:0 32px}
+  .tile{background:var(--surface);border-radius:12px;padding:16px;text-align:center;cursor:pointer;outline:none;transition:.15s}
+  .tile:focus{background:var(--surface2);box-shadow:0 0 0 3px var(--accent)}
+  .tile .icon{font-size:48px;margin-bottom:8px}
+  .tile .label{font-size:14px}
+  .screen{display:none;position:fixed;inset:0;background:var(--bg);padding:24px;overflow:auto}
+  .screen.active{display:block}
+  .topbar{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+  .btn{background:var(--surface2);color:var(--text);border:none;padding:8px 14px;border-radius:8px;cursor:pointer}
+  .btn:focus{outline:2px solid var(--accent)}
+  .catrow{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+  .cat{background:var(--surface);padding:8px 12px;border-radius:8px;cursor:pointer}
+  .cat.active{background:var(--primary)}
+  .list{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .card{background:var(--surface);padding:16px;border-radius:10px;cursor:pointer}
+  .card:focus{box-shadow:0 0 0 2px var(--accent)}
+  .player{background:#000;height:60vh;border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--muted);margin-top:12px}
+  .files{display:grid;grid-template-columns:1fr;gap:6px}
+  .file{background:var(--surface);padding:10px;border-radius:8px;cursor:pointer}
+  .file:focus{box-shadow:0 0 0 2px var(--accent)}
+</style>
+</head>
+<body>
+<div id="home" class="screen active">
+  <header>BCS Launcher (Preview)</header>
+  <div class="grid" id="grid"></div>
+</div>
+
+<div id="bcstv" class="screen">
+  <div class="topbar"><button class="btn" onclick="show('home')">Kembali</button><h2>BCS TV</h2></div>
+  <div class="catrow" id="cats"></div>
+  <div class="list" id="chans"></div>
+</div>
+
+<div id="player" class="screen">
+  <div class="topbar"><button class="btn" onclick="backFromPlayer()">Kembali</button><h2 id="ptitle"></h2></div>
+  <div class="player" id="pbox">▶ Memutar media (preview)</div>
+</div>
+
+<div id="files" class="screen">
+  <div class="topbar"><button class="btn" onclick="show('home')">Kembali</button><h2>File Manager</h2></div>
+  <div class="files" id="filelist"></div>
+</div>
+
+<div id="apps" class="screen">
+  <div class="topbar"><button class="btn" onclick="show('home')">Kembali</button><h2>Semua Aplikasi</h2></div>
+  <div class="grid" id="appgrid"></div>
+</div>
+
+<script>
+const apps=[
+ {id:'bcs_tv',label:'BCS TV',icon:'📺',action:()=>openBcs()},
+ {id:'youtube',label:'YouTube',icon:'▶️',action:()=>play('YouTube (preview)')},
+ {id:'ytmusic',label:'YouTube Music',icon:'🎵',action:()=>play('YouTube Music (preview)')},
+ {id:'files',label:'File Manager',icon:'📁',action:()=>show('files')},
+ {id:'media',label:'Media Player',icon:'🎬',action:()=>play('Media Player (preview)')},
+ {id:'drawer',label:'Semua Aplikasi',icon:'🧩',action:()=>show('apps')},
+ {id:'settings',label:'Pengaturan',icon:'⚙️',action:()=>alert('Pengaturan (preview)')}
+];
+const grid=document.getElementById('grid');
+apps.forEach(a=>{
+ const d=document.createElement('div');d.className='tile';d.tabIndex=0;
+ d.innerHTML=`<div class="icon">${a.icon}</div><div class="label">${a.label}</div>`;
+ d.onclick=a.action; grid.appendChild(d);
+});
+
+const categories=['TV Lokal Indonesia','Drama Korea','Drama China','Olahraga','Musik','Berita','Anak'];
+const channels={
+ 'TV Lokal Indonesia':['RCTI','SCTV','Indosiar','Trans TV'],
+ 'Drama Korea':['K-Drama 1','K-Drama 2','K-Drama 3'],
+ 'Drama China':['C-Drama 1','C-Drama 2'],
+ 'Olahraga':['Sport 1','Sport 2'],
+ 'Musik':['Music 1','Music 2'],
+ 'Berita':['News 1'],
+ 'Anak':['Kids 1']
+};
+let selCat=categories[0];
+const cats=document.getElementById('cats');
+categories.forEach(c=>{
+ const b=document.createElement('div');b.className='cat';b.textContent=c;
+ b.onclick=()=>{selCat=c;renderChans();updateCats();}; cats.appendChild(b);
+});
+function updateCats(){cats.querySelectorAll('.cat').forEach(e=>e.classList.toggle('active',e.textContent===selCat));}
+function renderChans(){
+ const el=document.getElementById('chans'); el.innerHTML='';
+ (channels[selCat]||[]).forEach(n=>{
+   const c=document.createElement('div');c.className='card';c.tabIndex=0;c.textContent=n;
+   c.onclick=()=>play(n); el.appendChild(c);
+ });
+}
+updateCats(); renderChans();
+
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function openBcs(){show('bcstv');}
+let lastScreen='home';
+function play(title){lastScreen=document.querySelector('.screen.active').id; document.getElementById('ptitle').textContent=title; show('player');}
+function backFromPlayer(){show(lastScreen);}
+
+const files=['DCIM','Download','Movies','Music','Documents','file1.mp4','image.jpg','song.mp3'];
+const fl=document.getElementById('filelist');
+files.forEach(f=>{
+ const d=document.createElement('div');d.className='file';d.tabIndex=0;d.textContent=f;
+ d.onclick=()=>{ if(f.endsWith('.mp4')) play(f); else alert(f); }; fl.appendChild(d);
+});
+
+const appgrid=document.getElementById('appgrid');
+['Chrome','Settings','Play Store','Files','Camera'].forEach(n=>{
+ const d=document.createElement('div');d.className='tile';d.tabIndex=0;d.innerHTML=`<div class="icon">📱</div><div class="label">${n}</div>`; appgrid.appendChild(d);
+});
+</script>
+</body>
+</html>

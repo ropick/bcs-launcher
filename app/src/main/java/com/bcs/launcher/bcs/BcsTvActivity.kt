@@ -21,10 +21,13 @@ class BcsTvActivity : AppCompatActivity() {
     )
 
     private val channels = listOf(
-        Channel("RCTI", "TV Lokal Indonesia", "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"),
-        Channel("SCTV", "TV Lokal Indonesia", "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"),
-        Channel("Indosiar", "TV Lokal Indonesia", "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4"),
-        Channel("Trans TV", "TV Lokal Indonesia", "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"),
+        Channel("RCTI", "TV Lokal Indonesia", "https://edge.okezone.com/live/rctioke.m3u8"),
+        Channel("SCTV", "TV Lokal Indonesia", "https://livestream-hybrid.akamaized.net/live/smil:sctv.smil/playlist.m3u8"),
+        Channel("Indosiar", "TV Lokal Indonesia", "https://livestream-hybrid.akamaized.net/live/smil:indosiar.smil/playlist.m3u8"),
+        Channel("Trans TV", "TV Lokal Indonesia", "https://video.detik.com/transtv/smil:transtv.smil/playlist.m3u8"),
+        Channel("Trans7", "TV Lokal Indonesia", "https://video.detik.com/trans7/smil:trans7.smil/playlist.m3u8"),
+        Channel("Metro TV", "TV Lokal Indonesia", "http://edge.metrotvnews.com:1935/live-edge/smil:metro.smil/playlist.m3u8"),
+        Channel("TVRI Nasional", "TV Lokal Indonesia", "http://wpc.d1627.nucdn.net:80/80D1627/o-tvri/Content/HLS/Live/Channel(TVRINASIONAL)/Stream(04)/index.m3u8"),
         Channel("K-Drama 1", "Drama Korea", "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4"),
         Channel("K-Drama 2", "Drama Korea", "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"),
         Channel("K-Drama 3", "Drama Korea", "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"),

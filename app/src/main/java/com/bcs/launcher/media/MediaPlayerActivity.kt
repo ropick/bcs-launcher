@@ -3,8 +3,10 @@ package com.bcs.launcher.media
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import com.bcs.launcher.R
@@ -30,6 +32,16 @@ class MediaPlayerActivity : AppCompatActivity() {
         ).build()
         val playerView = findViewById<PlayerView>(R.id.playerView)
         playerView.player = player
+
+        player?.addListener(object : Player.Listener {
+            override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
+                Toast.makeText(
+                    this@MediaPlayerActivity,
+                    "Gagal memutar kanal: ${error.message ?: "unknown error"}",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        })
 
         if (!url.isNullOrBlank()) {
             val mediaItem = MediaItem.fromUri(Uri.parse(url))

@@ -102,8 +102,8 @@ body{background:radial-gradient(1200px 600px at 20% -10%,#1a2a55 0%,transparent 
     <div class="hero-slide">
       <div class="bg" style="background-image:url('https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=1200&q=60')"></div>
       <div class="content">
-        <h1 id="heroTitle">BCS TV Premium</h1>
-        <p id="heroDesc">TV lokal, drama Korea &amp; China, olahraga, musik — lengkap dalam satu launcher.</p>
+        <h1 id="heroTitle">BCS TV Gratis</h1>
+        <p id="heroDesc">TV lokal, film &amp; drama, olahraga, musik, ilmu pengetahuan &amp; berita — lengkap dalam satu launcher.</p>
         <div class="btns"><button class="btn" id="heroPlay">▶ Tonton Sekarang</button><button class="btn ghost" id="heroList">+ Daftar Saya</button></div>
       </div>
     </div>
@@ -203,28 +203,62 @@ document.getElementById('search').addEventListener('input',e=>{
  });
 });
 
-const cats=['TV Lokal Indonesia','Drama Korea','Drama China','Olahraga','Musik','Berita','Anak'];
+const cats=['TV Lokal','Film & Drama','Olahraga','Musik','Ilmu Pengetahuan','Berita','Anak','Lainnya'];
 const catsEl=document.getElementById('cats');
-let selCat='TV Lokal Indonesia';
+let selCat='TV Lokal';
 cats.forEach(c=>{
  const e=document.createElement('div');e.className='cat'+(c===selCat?' on':'');e.textContent=c;
  e.onclick=()=>{selCat=c;catsEl.querySelectorAll('.cat').forEach(x=>x.classList.remove('on'));e.classList.add('on');renderChans(c);}; catsEl.appendChild(e);
 });
 const chanData={
- 'TV Lokal Indonesia':[
-   {n:'RCTI',u:'http://202.150.172.59/RCTIHD/index.m3u8'},
-   {n:'SCTV',u:'http://202.150.172.59/SCTV/tracks-v1a1/mono.m3u8'},
-   {n:'Indosiar',u:'http://202.150.172.59/Indosiar/index.m3u8'},
-   {n:'Metro TV',u:'https://edge.medcom.id/live-edge/smil:metro.smil/playlist.m3u8'},
-   {n:'ANTV',u:'http://103.58.160.157:8278/720-ANTV/playlist.m3u8'},
-   {n:'TVRI Nasional',u:'http://wpc.d1627.nucdn.net:80/80D1627/o-tvri/Content/HLS/Live/Channel(TVRINASIONAL)/Stream(04)/index.m3u8'}
- ],
- 'Drama Korea':['K-Drama 1','K-Drama 2','K-Drama 3','Hospital Playlist'],
- 'Drama China':['C-Drama 1','C-Drama 2','Love O2O'],
- 'Olahraga':['Sport 1','Sport 2','Liga 1'],
- 'Musik':['Music 1','Music 2','MTV'],
- 'Berita':['News 1','News 2'],
- 'Anak':['Kids 1','Kids 2']
+  'TV Lokal':[
+    {n:'TVRI Nasional',u:'https://ott-balancer.tvri.go.id/live/eds/Nasional/hls/Nasional.m3u8'},
+    {n:'TVRI World',u:'https://ott-balancer.tvri.go.id/live/eds/TVRIWorld/hls/TVRIWorld.m3u8'},
+    {n:'TVRI Sport HD',u:'https://ott-balancer.tvri.go.id/live/eds/SportHD/hls/SportHD.m3u8'},
+    {n:'TVRI Jakarta',u:'https://ott-balancer.tvri.go.id/live/eds/DKI/hls/DKI.m3u8'},
+    {n:'TVRI Jawa Barat',u:'https://ott-balancer.tvri.go.id/live/eds/Jabar/hls/Jabar.m3u8'},
+    {n:'TVRI Jawa Tengah',u:'https://ott-balancer.tvri.go.id/live/eds/Jateng/hls/Jateng.m3u8'},
+    {n:'TVRI Jawa Timur',u:'https://ott-balancer.tvri.go.id/live/eds/Jatim/hls/Jatim.m3u8'},
+    {n:'TVRI Yogyakarta',u:'https://ott-balancer.tvri.go.id/live/eds/Jogjakarta/hls/Jogjakarta.m3u8'},
+    {n:'TVRI Bali',u:'https://ott-balancer.tvri.go.id/live/eds/Bali/hls/Bali.m3u8'}
+  ],
+  'Film & Drama':[
+    {n:'AsianCrush',u:'https://linear-900.frequency.stream/dist/cineverse/900/hls/master/playlist.m3u8'}
+  ],
+  'Olahraga':[
+    {n:'Red Bull TV',u:'https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master.m3u8'}
+  ],
+  'Musik':[
+    {n:'Radio Paradise (AAC 320)',u:'https://stream.radioparadise.com/aac-320'},
+    {n:'SomaFM - Groove Salad',u:'https://ice1.somafm.com/groovesalad-128-mp3'}
+  ],
+  'Ilmu Pengetahuan':[
+    {n:'BBC Earth',u:'https://amg00793-amg00793c6-xumo-us-2669.playouts.now.amagi.tv/BBCStudios-BBCEarthA-hls/playlist.m3u8'},
+    {n:'NASA TV Public',u:'https://ntv1.akamaized.net/hls/live/2014075/NASA-NTV1-HLS/master.m3u8'},
+    {n:'NASA TV Media',u:'https://ntv2.akamaized.net/hls/live/2013923/NASA-NTV2-HLS/master.m3u8'},
+    {n:'NatureTime',u:'https://bamusa-naturetime-emea-eng-rakuten.amagi.tv/playlist.m3u8'},
+    {n:'PBS Create',u:'https://create.lls.pbs.org/index.m3u8'},
+    {n:'CGTN Documentary',u:'https://amg00405-rakutentv-cgtndocumentary-rakuten-0ql8j.amagi.tv/master.m3u8'},
+    {n:'CNA Originals',u:'https://amg01082-cna-amg01082c1-rlaxx-us-11304.playouts.now.amagi.tv/playlist.m3u8'},
+    {n:'Stingray Naturescape',u:'https://lotus.stingray.com/manifest/naturescape-a003-montreal/samsungtvplus/master.m3u8'}
+  ],
+  'Berita':[
+    {n:'DW English',u:'https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8'},
+    {n:'Al Jazeera English',u:'https://live-hls-apps-aje-fa.getaj.net/AJE/index.m3u8'},
+    {n:'France 24 English',u:'https://live.france24.com/hls/live/2037218-b/F24_EN_HI_HLS/master_5000.m3u8'},
+    {n:'CNA',u:'https://d2e1asnsl7br7b.cloudfront.net/7782e205e72f43aeb4a48ec97f66ebbe/index.m3u8'},
+    {n:'NHK World-Japan',u:'https://masterpl.hls.nhkworld.jp/hls/w/live/smarttv.m3u8'},
+    {n:'Bloomberg TV',u:'https://bloomberg.com/media-manifest/streams/us.m3u8'}
+  ],
+  'Anak':[
+    {n:'Moonbug Kids',u:'https://moonbug-rokuus.amagi.tv/playlist.m3u8'},
+    {n:'ZooMoo',u:'https://zoomoo-samsungau.amagi.tv/playlist.m3u8'}
+  ],
+  'Lainnya':[
+    {n:'Tastemade',u:'https://rakutenaa-tm-intl-aus-rakuten-eu-n1gtg.amagi.tv/playlist/rakutenAA-tm-intl-aus-rakuten-eu/playlist.m3u8'},
+    {n:'Arirang TV',u:'https://amdlive-ch01-ctnd-com.akamaized.net/arirang_1ch/smil:arirang_1ch.smil/playlist.m3u8'},
+    {n:'CGTN',u:'https://english-livebkali.cgtn.com/live/encgtn.m3u8'}
+  ]
 };
 function renderChans(cat){
  const rail=document.getElementById('chans'); rail.innerHTML='';
@@ -239,11 +273,12 @@ function renderChans(cat){
 renderChans(selCat);
 
 const recs=document.getElementById('recs');
-for(let i=0;i<10;i++){
+const recData=['TVRI Nasional','BBC Earth','NASA TV Public','Red Bull TV','DW English','AsianCrush','Radio Paradise','CNA','Moonbug Kids','PBS Create'];
+recData.forEach((n,i)=>{
  const c=document.createElement('div');c.className='card';c.tabIndex=0;
- c.innerHTML=`<div class="thumb" style="background-image:url('${imgs[i%imgs.length]}')"></div><div class="grad"></div><div class="info"><div class="t">Judul ${i+1}</div><div class="s">2024 • HD</div></div>`;
- c.onclick=()=>play('Judul '+(i+1)); recs.appendChild(c);
-}
+ c.innerHTML=`<div class="thumb" style="background-image:url('${imgs[i%imgs.length]}')"></div><div class="grad"></div><div class="info"><div class="t">${n}</div><div class="s">Live • HD</div></div>`;
+ c.onclick=()=>play(n); recs.appendChild(c);
+});
 
 // bcs tv view
 function openBcs(){
@@ -331,8 +366,8 @@ document.getElementById('backFromFiles').onclick=()=>{document.getElementById('f
 document.getElementById('seeAllChans').onclick=()=>toast('Semua channel (preview)');
 
 // hero
-const heroTitles=['BCS TV Premium','Drama Korea Terbaru','Olahraga Live'];
-const heroDescs=['TV lokal, drama Korea & China, olahraga, musik — lengkap.','Update episode setiap hari.','Liga, badminton, dan lainnya live.'];
+const heroTitles=['BCS TV Gratis','Ilmu Pengetahuan','Olahraga Live'];
+const heroDescs=['TV lokal, film & drama, olahraga, musik, berita — lengkap.','BBC Earth, NASA, PBS Create dan dokumenter lainnya.','Red Bull TV dan TVRI Sport live.'];
 let heroIdx=0;
 const heroDots=document.getElementById('heroDots');
 heroTitles.forEach((_,i)=>{const s=document.createElement('span');if(i===0)s.classList.add('on');heroDots.appendChild(s);});
@@ -360,7 +395,9 @@ function play(t,url){
      hls.on(Hls.Events.MANIFEST_PARSED,()=>{video.play().catch(()=>{});document.getElementById('mNow').textContent=t;});
      hls.on(Hls.Events.ERROR,()=>{document.getElementById('mNow').textContent=t+' (stream tidak tersedia/CORS)';});
    } else if(video.canPlayType('application/vnd.apple.mpegurl')){video.src=url;video.play().catch(()=>{});}
-   else {document.getElementById('mNow').textContent=t+' (HLS tidak didukung)';}
+   else {document.getElementById('mNow').textContent=t+' (HLS tidak didukung)';} } else if(url){
+   video.src=url; video.play().catch(()=>{});
+   document.getElementById('mNow').textContent=t;
  } else {
    video.removeAttribute('src'); video.load();
    document.getElementById('mNow').textContent=t+' (preview)';

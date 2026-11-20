@@ -26,8 +26,13 @@ jobs:
       - name: Build debug APK
         run: ./gradlew assembleDebug
 
+      - name: Rename APK
+        run: |
+          mkdir -p dist
+          cp app/build/outputs/apk/debug/*.apk dist/bcs-launcher.apk
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: bcs-launcher-debug
-          path: app/build/outputs/apk/debug/*.apk
+          name: bcs-launcher
+          path: dist/bcs-launcher.apk
